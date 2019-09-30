@@ -4,6 +4,9 @@
 
 trigger: none
 
+variables:
+  - VSEnterprise.ProductKey: 'Please Provide your own'
+
 resources:
 - repo: self
 
@@ -30,3 +33,4 @@ stages:
         tags: |
           base-latest
           base-$(Build.BuildId)
+        arguments: 'productkey=$(VSEnterprise.ProductKey)'

@@ -8,20 +8,15 @@ WORKDIR /azp
 SHELL ["cmd", "/S", "/C"]
 
 # Download the Visual Studio Build Tools bootstrapper.
-ADD https://aka.ms/vs/16/release/vs_buildtools.exe C:\Temp\vs_buildtools.exe
-
-# Use the latest release channel.
-ADD https://aka.ms/vs/16/release/channel C:\Temp\VisualStudio.chman
+ADD https://aka.ms/vs/16/release/vs_enterprise.exe C:\Temp\vs_enterprise.exe
 
 # For help on command-line syntax:
 # https://docs.microsoft.com/en-us/visualstudio/install/use-command-line-parameters-to-install-visual-studio
-RUN C:\Temp\vs_buildtools.exe `
-    --quiet --wait --norestart --nocache `
-    --installPath C:\BuildTools `
-    --channelUri C:\Temp\VisualStudio.chman `
-    --installChannelUri C:\Temp\VisualStudio.chman `
-    --all `
- || IF "%ERRORLEVEL%"=="3010" EXIT 0
+RUN C:\Temp\vs_enterprise.exe --in customInstall.json `
+  || IF "%ERRORLEVEL%"=="3010" EXIT 0
+
+RUN "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\Enterprise\\Common7\\IDE\\StorePID.exe" AAAAA-BBBBB-CCCCC-DDDDDD-EEEEEE 09260
+
 
 # Install Python and Git.
 RUN powershell.exe -ExecutionPolicy RemoteSigned `
