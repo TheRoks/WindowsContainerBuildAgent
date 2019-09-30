@@ -1,6 +1,6 @@
 # escape=`
 
-FROM theroks/azure-devops-windows-buildagent:base
+FROM theroks/azure-devops-windows-buildagent:base-latest
 
 WORKDIR /azp
 
