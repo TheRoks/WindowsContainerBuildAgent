@@ -16,7 +16,7 @@ ADD ${CHANNEL_URL} C:\TEMP\VisualStudio.chman
 
 # Download and install Build Tools excluding workloads and components with known issues.
 ADD https://aka.ms/vs/16/release/vs_buildtools.exe C:\TEMP\vs_buildtools.exe
-RUN C:\TEMP\Install.cmd C:\TEMP\vs_buildtools.exe --quiet --wait --norestart --nocache `
+RUN C:\TEMP\vs_buildtools.exe --quiet --wait --norestart --nocache `
     --installPath C:\BuildTools `
     --channelUri C:\TEMP\VisualStudio.chman `
     --installChannelUri C:\TEMP\VisualStudio.chman `
@@ -24,8 +24,9 @@ RUN C:\TEMP\Install.cmd C:\TEMP\vs_buildtools.exe --quiet --wait --norestart --n
     --remove Microsoft.VisualStudio.Component.Windows10SDK.10240 `
     --remove Microsoft.VisualStudio.Component.Windows10SDK.10586 `
     --remove Microsoft.VisualStudio.Component.Windows10SDK.14393 `
-    --remove Microsoft.VisualStudio.Component.Windows81SDK
-
+    --remove Microsoft.VisualStudio.Component.Windows81SDK `
+ || IF "%ERRORLEVEL%"=="3010" EXIT 0
+ 
 # Start developer command prompt with any other commands specified.
 ENTRYPOINT C:\BuildTools\Common7\Tools\VsDevCmd.bat &&
 
