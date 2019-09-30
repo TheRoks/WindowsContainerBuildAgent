@@ -26,8 +26,8 @@ stages:
       displayName: Build and Push
       inputs:
         command: buildAndPush
-        dockerfile: '$(Build.SourcesDirectory)/VS2019/Dockerfile'
+        dockerfile: '$(Build.SourcesDirectory)/Windows/Dockerfile'
         repository: theroks/azure-devops-windows-buildagent
         tags: |
-          vs2019-latest
-          vs2019-$(Build.BuildId)
+          base-latest
+          base-$(Build.BuildId)
