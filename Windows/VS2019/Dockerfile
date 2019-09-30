@@ -4,29 +4,30 @@ FROM theroks/azure-devops-windows-buildagent:base-latest
 
 WORKDIR /azp
 
-# Copy our Install script.
-COPY Install.cmd C:\TEMP\
+# Restore the default Windows shell for correct batch processing.
+SHELL ["cmd", "/S", "/C"]
 
-# Download collect.exe in case of an install failure.
-ADD https://aka.ms/vscollect.exe C:\TEMP\collect.exe
+# Download the Visual Studio Build Tools bootstrapper.
+ADD https://aka.ms/vs/16/release/vs_buildtools.exe C:\Temp\vs_buildtools.exe
 
-# Use the latest release channel. For more control, specify the location of an internal layout.
-ARG CHANNEL_URL=https://aka.ms/vs/16/release/channel
-ADD ${CHANNEL_URL} C:\TEMP\VisualStudio.chman
+# Use the latest release channel.
+ADD https://aka.ms/vs/16/release/channel C:\Temp\VisualStudio.chman
 
-# Download and install Build Tools excluding workloads and components with known issues.
-ADD https://aka.ms/vs/16/release/vs_buildtools.exe C:\TEMP\vs_buildtools.exe
-RUN C:\TEMP\vs_buildtools.exe --quiet --wait --norestart --nocache `
+# For help on command-line syntax:
+# https://docs.microsoft.com/en-us/visualstudio/install/use-command-line-parameters-to-install-visual-studio
+RUN C:\Temp\vs_buildtools.exe `
+    --quiet --wait --norestart --nocache `
     --installPath C:\BuildTools `
-    --channelUri C:\TEMP\VisualStudio.chman `
-    --installChannelUri C:\TEMP\VisualStudio.chman `
+    --channelUri C:\Temp\VisualStudio.chman `
+    --installChannelUri C:\Temp\VisualStudio.chman `
     --all `
-    --remove Microsoft.VisualStudio.Component.Windows10SDK.10240 `
-    --remove Microsoft.VisualStudio.Component.Windows10SDK.10586 `
-    --remove Microsoft.VisualStudio.Component.Windows10SDK.14393 `
-    --remove Microsoft.VisualStudio.Component.Windows81SDK `
  || IF "%ERRORLEVEL%"=="3010" EXIT 0
- 
+
+# Install Python and Git.
+RUN powershell.exe -ExecutionPolicy RemoteSigned `
+  iex (new-object net.webclient).downloadstring('https://get.scoop.sh'); `
+  scoop install python git
+
 # Start developer command prompt with any other commands specified.
 ENTRYPOINT C:\BuildTools\Common7\Tools\VsDevCmd.bat &&
 
