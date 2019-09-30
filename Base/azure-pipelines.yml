@@ -15,7 +15,7 @@ stages:
   - job: Build
     displayName: Build
     pool:
-      vmImage: 'vs2019'
+      vmImage: 'windows-2019'
     steps:
     - task: Docker@2
       displayName: login
